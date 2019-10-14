@@ -1,0 +1,88 @@
+---
+title: "10-import"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+# Describe the data and the problem
+
+I am interested in predicting the housing Values in Suburbs of Boston.
+
+We have the some interesting features of the house, for instance, 
+
+$black$
+1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.
+
+$ptratio$
+pupil-teacher ratio by town.
+
+How would these enviornment variables affect a house's value?
+
+
+I found this data set from our class repo, more information could be found at https://www.kaggle.com/c/boston-housing/overview/description
+
+## loading pkgs
+```{r pkgs, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(fs)
+library(purrr)
+library(stringr)
+library(assertr)
+library(caret)
+```
+
+## load data
+
+```{r load data, message=FALSE}
+df <- read_csv("./data/BostonHousing.csv")
+```
+## some functions
+```{r functions}
+#for check how many unique values for each var.
+col_uni <- function(df){
+  map(df,unique)
+}
+```
+
+
+##overview
+```{r #dataoverview}
+dim(df)
+str(df)
+summary(df)
+```
+## check the dataset
+```{r check}
+# check how many missing values in our dataset
+sum(is.na(df))
+
+
+
+# check the limit (based on description on the kaggle) for each variable 
+df %>% 
+  assert(in_set(c(1, 0)), chas)%>% 
+  assert(in_set(c(0:24)), rad)%>% 
+  assert(within_bounds(0,1), nox) %>%
+  assert(within_bounds(0,100), zn)%>%
+  assert(within_bounds(0,100), crim)%>%
+  assert(within_bounds(0,Inf),indus)%>%
+  assert(within_bounds(0,120), age) %>%
+  assert(within_bounds(0,Inf), dis) %>%
+  assert(within_bounds(0,100), ptratio) %>%
+  assert(within_bounds(0,Inf), tax) %>%
+  assert(within_bounds(0,Inf), medv) %>%
+  assert(within_bounds(0,Inf), b) %>%
+  assert(within_bounds(0,100), lstat)
+```
+
+## check each var
+
+From the result below, we can find that there are some variables only have few unique values. 
+they may be factor instead of numeric.
+
+"rad" & "chas" should be factor variables.
+```{r check var}
+map(col_uni(df),length)
+```

@@ -8,27 +8,125 @@ For the regular expression exercises, try writing first using regular expression
 
 # Part 1
 
+```{r pkgs, message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(RVerbalExpressions)
+```
+
+
 ## R4DS 16.4.5
 
 Create a vector of dates giving the first day of every month in the current year. 
+```{r}
+ymd("2019-01-01") + months(0:11)
+```
 
 Write a function that given your birthday (as a date), returns how old you are in years.
+```{r}
+get_age <- function(bday) {
+  (bday %--% today()) %/% years(1)
+}
+
+bday <- "1996-08-08"
+get_age(ymd(bday))
+```
 
 Write a function that given your birthday, returns the day of the week you were born on. 
+
+```{r}
+get_bweek <- function(bday) {
+  wday(bday)
+}
+
+get_bweek(bday = bday)
+```
+
 
 ## R4DS 14.3.2.1
 
 Given the corpus of common words in stringr::words, create regular expressions that find all words that have seven letters or more. (Since this list is long, you might want to use the match argument to str_view() to show only the matching or non-matching words.)
+
+```{r}
+words <- stringr::words
+
+
+str_view_all(words,".......+", match = TRUE)
+
+more_7 <- rx() %>%
+  rx_start_of_line() %>%
+  rx_word_char() %>% 
+  rx_repeat_previous(7) %>%
+  rx_anything() %>% 
+  rx_end_of_line()
+
+str_view(words,more_7, match = TRUE)
+```
+
+
 
 ## R4DS 14.3.3.1
 
 Use str_detect to find all words that:
 
 That only contain consonants. (Hint: thinking about matching “not”-vowels.)
+```{r}
+only_co <- str_detect(stringr::words, "^[^aeiou]+$")
+words[only_co]
+
+ronly_cp <- rx() %>%
+  rx_start_of_line() %>%
+  rx_anything_but("aeiou") %>%
+  rx_end_of_line() %>%
+  grepl(words)
+
+words[ronly_cp]
+
+
+```
 
 Empirically verify the rule “i before e except after c”.
 
+The first result shows the rule might be true.
+However, the second result tells us it is not true.
+
+```{r}
+length(str_subset(words, "(cei|[^c]ie)"))
+length(str_subset(words, "(cie|[^c]ei)"))
+
+```
+
+In other words, if we find words that contain exactly cie, we can also empirically verify the rule “i before e except after c”.
+```{r}
+ev_rule <-rx() %>%
+  rx_find("cie")
+  
+words[str_detect(words,ev_rule)]
+
+```
+
 Create a regular expression that will match telephone numbers as commonly written in the US. Split this up into multiple expressions as needed.
+
+
+```{r}
+cellnum <- c("879-154-7908", "135.484.7895","13547984587")
+str_view(cellnum,"\\d{3}-\\d{3}-\\d{4}|\\d{3}.\\d{3}.\\d{4}")
+
+telrx <- rx() %>%
+  rx_start_of_line() %>%
+  rx_digit() %>%
+  rx_repeat_previous(3) %>%
+  rx_any_of("-.") %>%
+  rx_digit() %>%
+  rx_repeat_previous(3) %>%
+  rx_any_of("-.") %>%
+  rx_digit() %>%
+  rx_repeat_previous(4) %>%
+  rx_end_of_line()
+
+str_view(cellnum, telrx)
+```
+
 
 # Part 2
 
