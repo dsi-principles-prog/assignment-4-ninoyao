@@ -11,14 +11,79 @@ I am interested in predicting the housing Values in Suburbs of Boston.
 
 We have the some interesting features of the house, for instance, 
 
+
+
 $black$
+
 1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.
 
 $ptratio$
+
 pupil-teacher ratio by town.
 
 How would these enviornment variables affect a house's value?
 
+The medv variable is the target variable.
+
+The Boston data frame has 506 rows and 14 columns.
+
+This data frame contains the following columns:
+
+crim
+
+per capita crime rate by town.
+
+zn
+
+proportion of residential land zoned for lots over 25,000 sq.ft.
+
+indus
+
+proportion of non-retail business acres per town.
+
+chas
+
+Charles River dummy variable (= 1 if tract bounds river; 0 otherwise).
+
+nox
+
+nitrogen oxides concentration (parts per 10 million).
+
+rm
+
+average number of rooms per dwelling.
+
+age
+
+proportion of owner-occupied units built prior to 1940.
+
+dis
+
+weighted mean of distances to five Boston employment centres.
+
+rad
+
+index of accessibility to radial highways.
+
+tax
+
+full-value property-tax rate per $10,000.
+
+ptratio
+
+pupil-teacher ratio by town.
+
+black
+
+1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.
+
+lstat
+
+lower status of the population (percent).
+
+medv
+
+median value of owner-occupied homes in $1000s.
 
 I found this data set from our class repo, more information could be found at https://www.kaggle.com/c/boston-housing/overview/description
 
@@ -42,25 +107,33 @@ df <- read_csv("./data/BostonHousing.csv")
 ```{r functions}
 #for check how many unique values for each var.
 col_uni <- function(df){
-  map(df,unique)
+  map(
+    map(df,unique), # apply the unique function to each column, return the unique value of each column.
+    length)
 }
 ```
 
 
-##overview
+## overview
+
+Information about our dataset. 
+From the tables below, we can find that we dont have missing values in our dataset and the colnames of our dataset are cleaning enough.
+
+
 ```{r #dataoverview}
 dim(df)
 str(df)
-summary(df)
+#no need for clean_names()
+#no need for na.omit()
+
 ```
 ## check the dataset
 ```{r check}
-# check how many missing values in our dataset
+# Doule check how many missing values in our dataset
 sum(is.na(df))
+#no need for dealing with NAs. 
 
-
-
-# check the limit (based on description on the kaggle) for each variable 
+# check the limit (based on description) for each variable 
 df %>% 
   assert(in_set(c(1, 0)), chas)%>% 
   assert(in_set(c(0:24)), rad)%>% 
@@ -84,5 +157,5 @@ they may be factor instead of numeric.
 
 "rad" & "chas" should be factor variables.
 ```{r check var}
-map(col_uni(df),length)
+col_uni(df)
 ```
