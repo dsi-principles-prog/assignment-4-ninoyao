@@ -67,8 +67,7 @@ varstd <- function(df,var){
 
 df <- varstd(df,var = c("crim" ,"zn","indus","nox", "rm", "age", "dis","tax","ptratio", "b", "lstat", "medv"))
 
-#test
-
+# visual_test
 df %>%
   select(contains("_std")) %>%
   map(mean) %>%
@@ -77,6 +76,31 @@ df %>%
 df %>%
   select(contains("_std")) %>%
   map(sd)
+# verify test
+df %>%
+  verify(round(mean(dis_std)) == 0) %>%
+  verify(sd(dis_std) == 1) %>%
+  verify(round(mean(crim_std)) == 0) %>%
+  verify(sd(crim_std) == 1) %>%
+  verify(round(mean(zn_std)) == 0) %>%
+  verify(sd(zn_std) == 1) %>%
+  verify(round(mean(nox_std)) == 0) %>%
+  verify(round(sd(nox_std)) == 1) %>%
+  verify(round(mean(rm_std)) == 0) %>%
+  verify(sd(rm_std) == 1) %>%
+  verify(round(mean(age_std)) == 0) %>%
+  verify(sd(age_std) == 1) %>%
+  verify(round(mean(dis_std)) == 0) %>%
+  verify(sd(dis_std) == 1) %>%
+  verify(round(mean(tax_std)) == 0) %>%
+  verify(round(sd(tax_std)) == 1) %>%
+  verify(round(mean(ptratio_std)) == 0) %>%
+  verify(round(sd(ptratio_std)) == 1) %>%
+  verify(round(mean(lstat_std)) == 0) %>%
+  verify(sd(lstat_std) == 1) %>%
+  verify(round(mean(medv_std)) == 0) %>%
+  verify(sd(medv_std) == 1)
+
 ```
 
 ### 3, levels of crime rate
@@ -155,6 +179,9 @@ df <- black_level(df)
 #test
 unique(df$black_level)
 
+df %>%
+assert(in_set(c("few-black","normal","more-black")),black_level) %>%
+
 ```
 
 
@@ -162,7 +189,7 @@ unique(df$black_level)
 
 ## Prepare the data for modeling
 
-split the training and testing set
+the final dataset.
 ```{r assert}
 # test whether the crime_level,black_level, rad_factor, chas_factor and the original variables.
 
